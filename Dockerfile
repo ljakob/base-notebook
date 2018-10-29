@@ -1,6 +1,6 @@
 # (ideally) minimal pyspark/jupyter notebook
 
-FROM radanalyticsio/openshift-spark:2.2-latest
+FROM radanalyticsio/openshift-spark-py36:2.3-latest
 
 USER root
 
@@ -15,10 +15,11 @@ ENV PYTHONIOENCODING UTF-8
 ENV CONDA_DIR /opt/conda
 ENV NB_USER=nbuser
 ENV NB_UID=1011
-ENV NB_PYTHON_VER=2.7
+ENV NB_PYTHON_VER=3.6
 
 # Python binary and source dependencies
-RUN yum install -y curl wget java-headless bzip2 gnupg2 sqlite3 \
+RUN sed -ie 's/enabled=1/enabled=0/' /etc/yum/pluginconf.d/fastestmirror.conf \
+    && yum install -y curl wget java-headless bzip2 gnupg2 sqlite3 \
     && yum clean all -y \
     && cd /tmp \
     && wget -q https://repo.continuum.io/miniconda/Miniconda3-4.2.12-Linux-x86_64.sh \
@@ -30,9 +31,8 @@ RUN yum install -y curl wget java-headless bzip2 gnupg2 sqlite3 \
     && /opt/conda/bin/conda install --quiet --yes python=$NB_PYTHON_VER 'nomkl' \
 			    'ipywidgets=5.2*' \
 			    'matplotlib=1.5*' \
-			    'scipy=0.17*' \
+			    'scipy=0.19*' \
 			    'seaborn=0.7*' \
-			    'cloudpickle=0.1*' \
 			    statsmodels \
 			    pandas \
 			    'dill=0.2*' \
